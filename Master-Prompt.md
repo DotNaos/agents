@@ -44,8 +44,8 @@ Activate this workflow **only** if the developer explicitly requests it **or** y
 ## PHASE 0 – HANDSHAKE & PROBLEM UNDERSTANDING *(no deeper code access yet)*
 
 0.1 Restate task goal in 1–2 sentences.
-0.2 Numbered uncertainties (see **QUESTION SECTION FORMAT**).
-0.3 Explicit assumptions when necessary (“Assumption: … OK?”).
+0.2 Numbered uncertainties **and explicit assumptions**, each with an ID (see **QUESTION SECTION FORMAT**).
+0.3 If you must assume something, include it in the same numbered list and prefix it with **A** (e.g., "A1: Assumption … – OK?").
 → Wait for approval: **“GO: PHASE 1”.**
 
 ---
@@ -75,15 +75,25 @@ Activate this workflow **only** if the developer explicitly requests it **or** y
 * `graph LR` or `graph TB`; nodes = files/modules/tests/policies; edges = relations (`import→`, `calls→`, `tests→`, `config of→`).
 * ≤ 40 nodes; collapse/group when needed; add legend if edge types aren’t obvious.
 
-### 2.8 Execution‑Flow (“Mole Tunnel”) Flowchart (Mermaid)
+### 2.8 Data‑Flow Diagrams (“Mole Tunnel”)
 
-* `flowchart TD` (or LR).
-* Include all major steps & gates from Phase ‑1 to Phase 4.
-* Show decision diamonds for “unclear? → ask developer”, “token limit exceeded? → summarize”, etc.
+Model how data or requests travel through the system **before** the change and how they will travel **after** the change.
+
+* Use Mermaid `sequenceDiagram` (preferred) or `flowchart LR/TD` – pick whichever best conveys the end‑to‑end journey (UI → Service → API → Domain Service → Repository → DB, etc.).
+* Produce **two diagrams** (or one combined view) clearly labelled **Before Change** and **After Change**.
+* Include **only actual components** discovered during context gathering (do **not** invent steps).
+* Highlight the insertion/removal/modification point(s) (e.g., with `==NewValidationStep==`, dashed borders, or bold nodes).
+* Keep each diagram concise but complete enough that the reviewer sees exactly where the pipeline is touched.
 
 ### 2.9 Output
 
 * **Context Packet:** file list + one‑sentence relevance.
+
+* **Concrete Change Plan:** which files/functions will be changed; which tests/docs touched.
+  → Ask: **“Plan OK?”** and wait for **“GO: PHASE 3”.** Output
+
+* **Context Packet:** file list + one‑sentence relevance.
+
 * **Concrete Change Plan:** which files/functions will be changed; which tests/docs touched.
   → Ask: **“Plan OK?”** and wait for **“GO: PHASE 3”.**
 
@@ -125,19 +135,25 @@ After Phase 4 passes review and (if active) merging local branches into the bas
 
 ---
 
-## QUESTION SECTION FORMAT *(mandatory whenever you have questions)*
+## QUESTION SECTION FORMAT \*(mandatory whenever you have questions **or assumptions**) \*
 
-Place **all questions at the very end** of your message, separated by markdown `---` lines, and number them.
+Place **all questions *****and assumptions to be confirmed***** at the very end** of your message, separated by markdown `---` lines, and assign each an ID.
 
 Example:
 
 ```
 ---
-### QUESTIONS
+### QUESTIONS & ASSUMPTIONS
 Q1: …
+A1: Assumption: … – OK?
 Q2: …
-Q3: …
 ---
+```
+
+### QUESTIONS
+
+## Q1: … Q2: … Q3: …
+
 ```
 
 The developer will answer using these IDs.
@@ -146,7 +162,9 @@ The developer will answer using these IDs.
 
 ## GENERAL RULES
 
-* No silent assumptions — always ask when unsure.
-* Stop and report blockers or contradictions immediately.
-* The IDE/environment defines output format & diffs; follow it without repeating it here.
-* Be concise, complete, deterministic.
+- No silent assumptions — always ask when unsure.
+- Stop and report blockers or contradictions immediately.
+- The IDE/environment defines output format & diffs; follow it without repeating it here.
+- Be concise, complete, deterministic.
+
+```
